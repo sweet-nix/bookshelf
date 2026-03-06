@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Estante — Sweet Nix</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Upright:wght@300;400;500;600;700&family=Cinzel+Decorative:wght@400;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Petit+Formal+Script&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --noite:#1a2540;--noite-media:#1f2d4e;--noite-clara:#263860;
+  --azul-cristal:#1e4d8c;--prata:#c8d8f0;--prata-clara:#e8f0fc;
+  --branco-lua:#f8faff;--cristal-azul:#7bb8f0;--cristal-gelo:#b8d8f8;
+  --estrela:#e8f0fc;--borda:rgba(180,210,255,0.2);--borda-brilho:rgba(180,210,255,0.45);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  background-color:var(--noite);
+  background-image:radial-gradient(ellipse at 20% 10%,rgba(60,100,200,0.35) 0%,transparent 50%),radial-gradient(ellipse at 80% 80%,rgba(40,70,140,0.3) 0%,transparent 50%),radial-gradient(ellipse at 50% 50%,rgba(30,50,100,0.25) 0%,transparent 100%);
+  background-attachment:fixed;font-family:'Lora',Georgia,serif;color:var(--prata-clara);min-height:100vh;
+  cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Cpath d='M10 1 L11.5 8 L18 10 L11.5 12 L10 19 L8.5 12 L2 10 L8.5 8 Z' fill='%23b8d8f8' fill-opacity='0.8'/%3E%3C/svg%3E") 10 10,auto;
+}
+::-webkit-scrollbar{width:6px;}::-webkit-scrollbar-track{background:var(--noite);}
+::-webkit-scrollbar-thumb{background:#1a3a6e;border-radius:3px;}::-webkit-scrollbar-thumb:hover{background:var(--cristal-azul);}
+::selection{background:rgba(123,184,240,0.3);color:var(--branco-lua);}
+
+/* ESTRELAS */
+#campo-estrelas{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+.estrela-pixel{position:absolute;border-radius:50%;background:var(--estrela);animation:piscar linear infinite;}
+@keyframes piscar{0%,100%{opacity:var(--op-min);transform:scale(1);}50%{opacity:var(--op-max);transform:scale(1.5);}}
+.estrela-cadente{position:absolute;height:1px;background:linear-gradient(90deg,transparent,rgba(184,216,248,0.9),transparent);border-radius:1px;animation:cair linear forwards;opacity:0;}
+@keyframes cair{0%{opacity:0;transform:translateX(0) translateY(0) rotate(35deg);}8%{opacity:1;}85%{opacity:0.6;}100%{opacity:0;transform:translateX(300px) translateY(120px) rotate(35deg);}}
+
+/* BARRA TOPO */
+.barra-topo{background:rgba(6,13,26,0.9);border-bottom:1px solid var(--borda);backdrop-filter:blur(10px);font-family:'Cinzel Decorative',serif;font-size:0.6rem;letter-spacing:0.35em;text-align:center;padding:7px 20px;color:var(--cristal-gelo);position:relative;z-index:10;}
+.barra-topo span{opacity:0.6;margin:0 12px;}
+
+/* HEADER */
+#header-wrapper{position:relative;overflow:hidden;padding:0;z-index:5;}
+#header-wrapper::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 60%,rgba(30,77,140,0.5) 0%,transparent 55%),radial-gradient(ellipse at 75% 30%,rgba(123,184,240,0.12) 0%,transparent 40%),radial-gradient(ellipse at 50% 100%,rgba(6,13,26,0.95) 0%,transparent 50%);pointer-events:none;}
+#header-wrapper::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--cristal-azul),var(--cristal-gelo),var(--cristal-azul),transparent);opacity:0.6;}
+.header-interno{max-width:1340px;margin:0 auto;padding:52px 24px 44px;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;z-index:2;}
+.header-cristal{font-size:2rem;margin-bottom:14px;animation:flutuar 5s ease-in-out infinite;filter:drop-shadow(0 0 14px rgba(123,184,240,0.7));}
+@keyframes flutuar{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+#header h1 a,#header h1 a:visited{font-family:'Cinzel Decorative',serif;font-size:clamp(2rem,5.5vw,3.6rem);font-weight:400;background:linear-gradient(135deg,var(--branco-lua) 0%,var(--cristal-gelo) 40%,var(--prata) 70%,var(--cristal-azul) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:0.08em;line-height:1.2;text-decoration:none;filter:drop-shadow(0 0 20px rgba(123,184,240,0.4));}
+.header-desc{font-family:'Petit Formal Script',cursive;font-size:1.15rem;color:var(--cristal-gelo);margin-top:10px;letter-spacing:0.03em;opacity:0.85;}
+.div-constelacao{display:flex;align-items:center;gap:10px;color:var(--cristal-azul);margin:16px 0 0;width:280px;}
+.div-constelacao::before,.div-constelacao::after{content:'';flex:1;height:1px;background:linear-gradient(to right,transparent,var(--cristal-azul),transparent);}
+.div-constelacao-icone{font-size:0.85rem;display:flex;align-items:center;gap:8px;color:var(--cristal-gelo);opacity:0.7;letter-spacing:0.2em;}
+
+/* NAV */
+#nav-wrapper{background:rgba(6,13,26,0.88);backdrop-filter:blur(16px);border-bottom:1px solid var(--borda);position:sticky;top:0;z-index:100;box-shadow:0 4px 30px rgba(0,0,0,0.5),0 1px 0 rgba(123,184,240,0.1);}
+.nav-interno{max-width:1340px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:center;gap:16px;}
+.nav-logo{font-family:'Lora',serif;font-size:0.85rem;letter-spacing:0.08em;font-style:italic;color:var(--cristal-gelo);text-decoration:none;opacity:0.8;white-space:nowrap;transition:opacity 0.2s;padding:16px 0;}
+.nav-logo:hover{opacity:1;}
+.nav-links{display:flex;list-style:none;}
+.nav-links>li>a{display:flex;align-items:center;padding:16px 15px;font-family:'Lora',serif;font-size:0.8rem;font-weight:500;letter-spacing:0.06em;color:var(--prata);text-decoration:none;transition:color 0.25s;white-space:nowrap;position:relative;}
+.nav-links>li>a::after{content:'';position:absolute;bottom:0;left:50%;right:50%;height:1px;background:linear-gradient(90deg,var(--cristal-azul),var(--cristal-gelo));transition:left 0.3s,right 0.3s;}
+.nav-links>li>a:hover::after,.nav-links>li>a.active::after{left:15px;right:15px;}
+.nav-links>li>a:hover{color:var(--branco-lua);}
+.nav-links>li>a.active{color:var(--cristal-gelo);}
+
+/* CONTEÚDO */
+#content-wrapper{position:relative;z-index:2;max-width:1100px;margin:0 auto;padding:52px 24px 80px;}
+
+/* PAGE HEADER */
+.page-header{text-align:center;margin-bottom:44px;}
+.page-header h1{font-family:'Cinzel Decorative',serif;font-size:clamp(1.8rem,4vw,2.8rem);font-weight:400;background:linear-gradient(135deg,var(--branco-lua) 0%,var(--cristal-gelo) 50%,var(--cristal-azul) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:0.08em;filter:drop-shadow(0 0 16px rgba(123,184,240,0.3));margin-bottom:8px;}
+.page-header p{font-family:'Petit Formal Script',cursive;color:var(--cristal-gelo);font-size:1rem;opacity:0.75;}
+.orn-divider{display:flex;align-items:center;gap:12px;color:var(--cristal-azul);margin:14px auto;max-width:400px;}
+.orn-divider::before,.orn-divider::after{content:'';flex:1;height:1px;background:linear-gradient(to right,transparent,var(--cristal-azul),transparent);}
+
+/* STATS */
+.stats-bar{display:flex;gap:0;flex-wrap:wrap;margin-bottom:36px;background:rgba(20,35,70,0.6);border:1px solid var(--borda-brilho);backdrop-filter:blur(12px);overflow:hidden;}
+.stat-item{flex:1;min-width:120px;text-align:center;padding:20px 16px;border-right:1px solid var(--borda);}
+.stat-item:last-child{border-right:none;}
+.stat-num{font-family:'Cinzel Decorative',serif;font-size:1.8rem;font-weight:400;background:linear-gradient(135deg,var(--cristal-gelo),var(--cristal-azul));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;display:block;filter:drop-shadow(0 0 8px rgba(123,184,240,0.3));}
+.stat-label{font-family:'Cinzel Decorative',serif;font-size:0.55rem;letter-spacing:0.2em;color:var(--prata);opacity:0.6;margin-top:6px;display:block;}
+
+/* CONTROLES */
+.controles{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px;}
+.controles-label{font-family:'Cinzel Decorative',serif;font-size:0.58rem;letter-spacing:0.2em;color:var(--cristal-azul);opacity:0.7;white-space:nowrap;}
+.view-toggle{display:flex;border:1px solid var(--borda-brilho);overflow:hidden;}
+.view-btn{font-family:'Cinzel Decorative',serif;font-size:0.56rem;letter-spacing:0.12em;color:var(--prata);background:rgba(15,25,50,0.6);border:none;border-right:1px solid var(--borda);padding:9px 18px;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+.view-btn:last-child{border-right:none;}
+.view-btn:hover{color:var(--cristal-gelo);background:rgba(30,77,140,0.2);}
+.view-btn.active{background:rgba(30,77,140,0.5);color:var(--branco-lua);}
+
+/* FILTRO DE GÊNERO */
+.filtro-genero{display:none;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:28px;padding:14px 16px;background:rgba(20,35,70,0.4);border:1px solid var(--borda);}
+.filtro-genero.visivel{display:flex;}
+.filtro-btn{font-family:'Cinzel Decorative',serif;font-size:0.54rem;letter-spacing:0.12em;color:var(--prata);background:transparent;border:1px solid var(--borda);padding:7px 14px;cursor:pointer;transition:all 0.2s;}
+.filtro-btn:hover{color:var(--cristal-gelo);border-color:var(--borda-brilho);}
+.filtro-btn.active{background:rgba(30,77,140,0.5);color:var(--branco-lua);border-color:var(--cristal-azul);}
+
+/* SEÇÃO */
+.bs-secao{margin-bottom:44px;}
+.bs-secao-header{display:flex;align-items:center;gap:14px;margin-bottom:20px;}
+.bs-secao-titulo{font-family:'Cinzel Decorative',serif;font-size:0.85rem;font-weight:400;letter-spacing:0.15em;color:var(--cristal-gelo);white-space:nowrap;}
+.bs-secao-linha{flex:1;height:1px;background:linear-gradient(to right,rgba(123,184,240,0.4),transparent);}
+.bs-secao-count{font-family:'Cinzel Decorative',serif;font-size:0.54rem;letter-spacing:0.15em;color:var(--cristal-azul);opacity:0.6;white-space:nowrap;}
+
+/* GRADE */
+.bs-grade{display:flex;flex-wrap:wrap;gap:16px;}
+
+/* CARD */
+.bs-livro{width:100px;position:relative;transition:transform 0.2s;cursor:default;}
+.bs-livro:hover{transform:translateY(-4px);}
+.bs-capa-wrap{position:relative;width:100px;height:152px;border:1px solid var(--borda);box-shadow:3px 4px 16px rgba(0,0,0,0.55),0 0 0 1px rgba(123,184,240,0.05);overflow:hidden;background:var(--noite-clara);}
+.bs-capa-wrap img{width:100%;height:100%;object-fit:cover;display:block;}
+.bs-placeholder{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px;text-align:center;background:linear-gradient(160deg,var(--noite-media),var(--noite-clara));}
+.bs-placeholder span{font-family:'Lora',serif;font-size:0.58rem;font-style:italic;color:var(--prata);line-height:1.4;opacity:0.75;}
+.bs-stars{display:flex;justify-content:center;gap:1px;margin-top:6px;font-size:0.65rem;}
+.bs-star-full{color:#f0d070;filter:drop-shadow(0 0 3px rgba(240,192,112,0.5));}
+.bs-star-empty{color:rgba(180,210,255,0.2);}
+.bs-titulo{font-family:'Lora',serif;font-size:0.68rem;font-style:italic;color:var(--prata);text-align:center;margin-top:4px;line-height:1.3;}
+.bs-autor-label{font-family:'Cinzel Decorative',serif;font-size:0.48rem;letter-spacing:0.06em;color:var(--cristal-azul);text-align:center;margin-top:3px;opacity:0.6;}
+.bs-link{position:absolute;inset:0;z-index:3;text-decoration:none;}
+
+/* TOOLTIP */
+.bs-livro:hover .bs-tooltip{display:block;}
+.bs-tooltip{display:none;position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:rgba(6,13,26,0.97);color:var(--cristal-gelo);font-family:'Lora',serif;font-size:0.76rem;font-style:italic;padding:8px 12px;border:1px solid var(--borda-brilho);white-space:nowrap;z-index:10;pointer-events:none;backdrop-filter:blur(8px);line-height:1.5;}
+.bs-tooltip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:var(--borda-brilho);}
+
+/* VAZIO */
+.bs-vazio{font-family:'Petit Formal Script',cursive;color:var(--cristal-azul);text-align:center;padding:60px 40px;font-size:1.1rem;opacity:0.5;width:100%;}
+
+/* SPARKLE */
+.sparkle{position:fixed;pointer-events:none;z-index:9999;width:5px;height:5px;border-radius:50%;background:var(--cristal-gelo);animation:sparkle-fade 0.7s ease forwards;}
+@keyframes sparkle-fade{0%{opacity:0.9;transform:scale(1);}100%{opacity:0;transform:scale(0) translateY(-10px);}}
+
+@media(max-width:700px){
+  .bs-livro{width:80px;}.bs-capa-wrap{width:80px;height:122px;}
+  .header-interno{padding:36px 16px 30px;}.nav-logo{display:none;}
+  .nav-links>li>a{padding:14px 10px;font-size:0.72rem;}
+  .stat-item{min-width:80px;padding:14px 10px;}.stat-num{font-size:1.3rem;}
+}
+</style>
+</head>
+<body>
+
+<div id="campo-estrelas"></div>
+
+<div class="barra-topo"><span>✦</span> sweet nix <span>✦</span> estante <span>✦</span></div>
+
+<div id="header-wrapper">
+  <div class="header-interno" id="header">
+    <div class="header-cristal">🌒🌓🌔🌕🌖🌗🌘</div>
+    <h1><a href="https://sweet-nix.blogspot.com/">Sweet Nix</a></h1>
+    <p class="header-desc">entre sonhos, páginas e céus</p>
+    <div class="div-constelacao"><div class="div-constelacao-icone"><span>✦</span><span>◆</span><span>✦</span></div></div>
+  </div>
+</div>
+
+<div id="nav-wrapper">
+  <div class="nav-interno">
+    <ul class="nav-links">
+      <li><a href="https://sweet-nix.blogspot.com/">Início</a></li>
+      <li><a href="https://sweet-nix.blogspot.com/search/label/Resenhas">Resenhas</a></li>
+      <li><a href="https://sweet-nix.github.io/projetos-de-leitura/">Projetos de Leitura</a></li>
+      <li><a href="https://sweet-nix.github.io/bookshelf/" class="active">Estante</a></li>
+      <li><a href="https://sweet-nix.github.io/book-bingo/">Book Bingo</a></li>
+    </ul>
+  </div>
+</div>
+
+<div id="content-wrapper">
+
+  <div class="page-header">
+    <h1>Minha Estante</h1>
+    <div class="orn-divider">◆</div>
+    <p>todos os livros que já li, catalogados sob a luz das estrelas</p>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-bar">
+    <div class="stat-item">
+      <span class="stat-num" id="stat-total">0</span>
+      <span class="stat-label">Livros Lidos</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num" id="stat-autores">0</span>
+      <span class="stat-label">Autores</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num" id="stat-generos">0</span>
+      <span class="stat-label">Gêneros</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num" id="stat-media">—</span>
+      <span class="stat-label">Média de Nota</span>
+    </div>
+  </div>
+
+  <!-- CONTROLES -->
+  <div class="controles">
+    <span class="controles-label">Ver por</span>
+    <div class="view-toggle">
+      <button class="view-btn active" onclick="setView('ano',this)">Ano</button>
+      <button class="view-btn" onclick="setView('autor',this)">Autor</button>
+      <button class="view-btn" onclick="setView('genero',this)">Gênero</button>
+    </div>
+  </div>
+
+  <!-- FILTRO GÊNERO -->
+  <div class="filtro-genero" id="filtro-genero">
+    <span class="controles-label">Filtrar</span>
+    <div id="filtro-btns"></div>
+  </div>
+
+  <!-- CONTAINER -->
+  <div id="bs-container"></div>
+
+</div>
+
+<script>
+// ESTRELAS
+(function(){var c=document.getElementById('campo-estrelas');for(var i=0;i<120;i++){var s=document.createElement('div');s.className='estrela-pixel';var sz=Math.random()*2.5+0.5;s.style.cssText='left:'+Math.random()*100+'%;top:'+Math.random()*100+'%;width:'+sz+'px;height:'+sz+'px;--op-min:'+(Math.random()*0.2+0.05).toFixed(2)+';--op-max:'+(Math.random()*0.5+0.4).toFixed(2)+';animation-duration:'+(Math.random()*4+2)+'s;animation-delay:'+(Math.random()*5)+'s;';c.appendChild(s);}function cadente(){var s=document.createElement('div');s.className='estrela-cadente';s.style.cssText='left:'+Math.random()*80+'%;top:'+Math.random()*50+'%;width:'+(Math.random()*120+60)+'px;animation-duration:'+(Math.random()*1.5+1)+'s;';c.appendChild(s);setTimeout(function(){s.remove();},3000);}cadente();setInterval(cadente,Math.random()*5000+4000);})();
+document.addEventListener('mousemove',function(e){if(Math.random()>0.25)return;var sp=document.createElement('div');sp.className='sparkle';sp.style.left=e.clientX+'px';sp.style.top=e.clientY+'px';document.body.appendChild(sp);setTimeout(function(){sp.remove();},700);});
+
+// ══════════════════════════════════════════════════════
+// SEUS LIVROS — adicione aqui!
+//
+// title:   título do livro
+// author:  autor (Sobrenome, Nome — para ordenar)
+// year:    ano em que você leu
+// rating:  nota de 1 a 5 estrelas
+// genres:  array de gêneros (use sempre os mesmos nomes)
+// cover:   URL da capa (deixe '' para placeholder)
+// review:  URL da resenha no blog (deixe '' se não tiver)
+// ══════════════════════════════════════════════════════
+var LIVROS = [
+  // Exemplo — remova ou edite:
+  // {
+  //   title:  "O Nome do Vento",
+  //   author: "Rothfuss, Patrick",
+  //   year:   2024,
+  //   rating: 5,
+  //   genres: ["Fantasia"],
+  //   cover:  "https://url-da-capa.jpg",
+  //   review: "https://sweet-nix.blogspot.com/sua-resenha"
+  // },
+];
+
+// Gêneros disponíveis (adicione ou remova conforme precisar)
+var TODOS_GENEROS = [
+  "Fantasia","Fantasia Épica","Dark Fantasy","Romance Sombrio",
+  "Ficção Científica","Terror","Mistério","Thriller",
+  "Ficção Histórica","Contemporâneo","Clássicos","Novela Gráfica"
+];
+
+// ══════════════════════════════════════════════════════
+// ENGINE — não precisa editar abaixo
+// ══════════════════════════════════════════════════════
+var viewAtual = 'ano';
+var generoAtivo = 'todos';
+
+function stars(rating){
+  var h='';
+  for(var i=1;i<=5;i++) h+='<span class="'+(i<=rating?'bs-star-full':'bs-star-empty')+'">★</span>';
+  return '<div class="bs-stars">'+h+'</div>';
+}
+
+function nomeAutor(author){
+  var partes = author.split(',');
+  return partes.length > 1 ? partes.slice(1).join(' ').trim()+' '+partes[0].trim() : author;
+}
+
+function card(b){
+  var capa = b.cover
+    ? '<img src="'+b.cover+'" alt="'+b.title+'" loading="lazy"/>'
+    : '<div class="bs-placeholder"><span>'+b.title+'</span></div>';
+  var link = b.review ? '<a class="bs-link" href="'+b.review+'" target="_blank"></a>' : '';
+  var nome = nomeAutor(b.author);
+  return '<div class="bs-livro">'
+    +'<div class="bs-capa-wrap">'+capa+link+'</div>'
+    + stars(b.rating)
+    +'<div class="bs-titulo">'+b.title+'</div>'
+    +'<div class="bs-autor-label">'+nome+'</div>'
+    +'<div class="bs-tooltip"><strong>'+b.title+'</strong><br/>'+nome+(b.year?'<br/><span style="opacity:0.6;font-size:0.7rem;">'+b.year+'</span>':'')+'</div>'
+    +'</div>';
+}
+
+function secao(titulo, livros){
+  if(!livros.length) return '';
+  return '<div class="bs-secao">'
+    +'<div class="bs-secao-header">'
+    +'<div class="bs-secao-titulo">'+titulo+'</div>'
+    +'<div class="bs-secao-linha"></div>'
+    +'<div class="bs-secao-count">'+livros.length+(livros.length===1?' livro':' livros')+'</div>'
+    +'</div>'
+    +'<div class="bs-grade">'+livros.map(card).join('')+'</div>'
+    +'</div>';
+}
+
+function agrupar(arr, fn){
+  var map={};
+  arr.forEach(function(b){
+    var k=fn(b);
+    if(!map[k]) map[k]=[];
+    map[k].push(b);
+  });
+  return map;
+}
+
+function render(){
+  var livros = LIVROS.slice();
+  var html = '';
+
+  if(viewAtual==='ano'){
+    livros.sort(function(a,b){return b.year-a.year;});
+    var por = agrupar(livros,function(b){return b.year;});
+    Object.keys(por).sort(function(a,b){return b-a;}).forEach(function(k){
+      html += secao(k, por[k]);
+    });
+  }
+  else if(viewAtual==='autor'){
+    livros.sort(function(a,b){return a.author.localeCompare(b.author);});
+    var por = agrupar(livros,function(b){return b.author[0].toUpperCase();});
+    Object.keys(por).sort().forEach(function(k){
+      html += secao(k, por[k]);
+    });
+  }
+  else if(viewAtual==='genero'){
+    var filtrados = generoAtivo==='todos'
+      ? livros
+      : livros.filter(function(b){return b.genres.indexOf(generoAtivo)!==-1;});
+    filtrados.sort(function(a,b){return a.title.localeCompare(b.title);});
+    if(filtrados.length){
+      html = '<div class="bs-secao"><div class="bs-grade">'+filtrados.map(card).join('')+'</div></div>';
+    } else {
+      html = '<div class="bs-vazio">nenhum livro encontrado neste gênero ainda...</div>';
+    }
+  }
+
+  if(!html) html='<div class="bs-vazio">a estante está vazia por enquanto — em breve chegarão novas histórias ✦</div>';
+  document.getElementById('bs-container').innerHTML = html;
+}
+
+function setView(view, btn){
+  viewAtual = view;
+  document.querySelectorAll('.view-btn').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  var fg = document.getElementById('filtro-genero');
+  if(view==='genero') fg.classList.add('visivel'); else fg.classList.remove('visivel');
+  render();
+}
+
+function setGenero(g, btn){
+  generoAtivo = g;
+  document.querySelectorAll('.filtro-btn').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  render();
+}
+
+function buildStats(){
+  var total = LIVROS.length;
+  var autores = new Set(LIVROS.map(function(b){return b.author;})).size;
+  var generos = new Set(LIVROS.reduce(function(acc,b){return acc.concat(b.genres);},[]) ).size;
+  var comNota = LIVROS.filter(function(b){return b.rating;});
+  var media = comNota.length
+    ? (comNota.reduce(function(s,b){return s+b.rating;},0)/comNota.length).toFixed(1)
+    : '—';
+  document.getElementById('stat-total').textContent   = total;
+  document.getElementById('stat-autores').textContent = autores;
+  document.getElementById('stat-generos').textContent = generos;
+  document.getElementById('stat-media').textContent   = media;
+}
+
+function buildFiltroGeneros(){
+  var usados = new Set(LIVROS.reduce(function(a,b){return a.concat(b.genres);},[]) );
+  var html = '<button class="filtro-btn active" onclick="setGenero(\'todos\',this)">Todos</button>';
+  TODOS_GENEROS.forEach(function(g){
+    if(usados.has(g)){
+      html += '<button class="filtro-btn" onclick="setGenero(\''+g+'\',this)">'+g+'</button>';
+    }
+  });
+  document.getElementById('filtro-btns').innerHTML = html;
+}
+
+buildStats();
+buildFiltroGeneros();
+render();
+</script>
+</body>
+</html>
